@@ -8,7 +8,10 @@ var Configuration = builder.Configuration;
 var services = builder.Services;
 
 
-builder.Services.AddControllers();
+builder.Services.AddControllers(options =>{
+    options.SuppressAsyncSuffixInActionNames = false;
+});
+builder.Services.AddRouting(options => options.LowercaseUrls = true);
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "Play.Trading.Service", Version = "v1" });
