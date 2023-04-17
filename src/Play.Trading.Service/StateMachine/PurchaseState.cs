@@ -2,7 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Automatonymous;
 using MassTransit;
+using MassTransit.Saga;
 
 namespace Play.Trading.Service.StateMachine
 {
