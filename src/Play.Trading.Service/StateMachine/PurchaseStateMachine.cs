@@ -15,6 +15,7 @@ namespace Play.Trading.Service.StateMachine
         public State Faulted { get; }
 
         public Event<PurchaseRequested> PurchaseRequested { get; }
+        public Event<GetPurchaseState> GetPurchaseState { get; }
 
         public PurchaseStateMachine()
         {
@@ -23,11 +24,14 @@ namespace Play.Trading.Service.StateMachine
             ConfigureEvents();
 
             ConfigureInitialState();
+
+            ConfigureAny();
         }
 
         private void ConfigureEvents()
         {
             Event(() => PurchaseRequested);
+            Event(() => GetPurchaseState);
         }
 
         private void ConfigureInitialState()
@@ -42,6 +46,14 @@ namespace Play.Trading.Service.StateMachine
                     context.Instance.LastUpdated = context.Instance.Received;
                 })
                 .TransitionTo(Accepted)
+            );
+        }
+
+        private void ConfigureAny()
+        {
+            DuringAny(
+                When(GetPurchaseState)
+                .Respond(x => x.Instance)
             );
         }
     }

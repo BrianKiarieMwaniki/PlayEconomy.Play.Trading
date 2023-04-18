@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using MassTransit;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
@@ -20,9 +21,12 @@ builder.Services.AddMongo()
 
 AddMassTransit(services);
 
-builder.Services.AddControllers(options =>{
+builder.Services.AddControllers(options =>
+{
     options.SuppressAsyncSuffixInActionNames = false;
-});
+}).AddJsonOptions(options => options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull);
+
+
 builder.Services.AddRouting(options => options.LowercaseUrls = true);
 builder.Services.AddSwaggerGen(c =>
 {
@@ -61,7 +65,7 @@ void AddMassTransit(IServiceCollection services)
     {
         configure.UsingPlayEconomyRabbitMq();
         configure.AddSagaStateMachine<PurchaseStateMachine, PurchaseState>()
-                    .MongoDbRepository(r => 
+                    .MongoDbRepository(r =>
                     {
                         var serviceSettings = Configuration.GetSection(nameof(ServiceSettings)).Get<ServiceSettings>();
                         var mongoSettings = Configuration.GetSection(nameof(MongoDbSettings)).Get<MongoDbSettings>();
@@ -72,4 +76,6 @@ void AddMassTransit(IServiceCollection services)
     });
 
     services.AddMassTransitHostedService();
+
+    services.AddGenericRequestClient();
 }

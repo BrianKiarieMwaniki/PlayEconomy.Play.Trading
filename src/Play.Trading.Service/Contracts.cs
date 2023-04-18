@@ -12,4 +12,6 @@ namespace Play.Trading.Service
         Guid CorrelationId
     );
     
+
+    public record GetPurchaseState(Guid CorrelationId);
 }
