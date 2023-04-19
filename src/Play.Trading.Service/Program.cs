@@ -1,3 +1,4 @@
+using System.Reflection;
 using System.Text.Json.Serialization;
 using MassTransit;
 using Microsoft.AspNetCore.Builder;
@@ -9,6 +10,7 @@ using Play.Common.Identity;
 using Play.Common.MassTransit;
 using Play.Common.MongoDB;
 using Play.Common.Settings;
+using Play.Trading.Service.Entities;
 using Play.Trading.Service.StateMachine;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -17,6 +19,7 @@ var services = builder.Services;
 
 
 builder.Services.AddMongo()
+                .AddMongoRepository<CatalogItem>("catalogitems")
                 .AddJwtBearerAuthentication();
 
 AddMassTransit(services);
@@ -45,7 +48,6 @@ if (app.Environment.IsDevelopment())
         c.SwaggerEndpoint("/swagger/v1/swagger.json", "Play.Catalog.Service v1");
         c.RoutePrefix = string.Empty;
     });
-
 }
 
 app.UseHttpsRedirection();
@@ -64,6 +66,7 @@ void AddMassTransit(IServiceCollection services)
     services.AddMassTransit(configure =>
     {
         configure.UsingPlayEconomyRabbitMq();
+        configure.AddConsumers(Assembly.GetEntryAssembly());
         configure.AddSagaStateMachine<PurchaseStateMachine, PurchaseState>()
                     .MongoDbRepository(r =>
                     {
