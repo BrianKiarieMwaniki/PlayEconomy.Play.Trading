@@ -1,3 +1,4 @@
+using System;
 using System.Reflection;
 using System.Text.Json.Serialization;
 using MassTransit;
@@ -12,6 +13,8 @@ using Play.Common.MongoDB;
 using Play.Common.Settings;
 using Play.Trading.Service.Entities;
 using Play.Trading.Service.StateMachine;
+using GreenPipes;
+using Play.Trading.Service.Exceptions;
 
 var builder = WebApplication.CreateBuilder(args);
 var Configuration = builder.Configuration;
@@ -65,7 +68,11 @@ void AddMassTransit(IServiceCollection services)
 {
     services.AddMassTransit(configure =>
     {
-        configure.UsingPlayEconomyRabbitMq();
+        configure.UsingPlayEconomyRabbitMq(retryConfigurator =>
+        {
+            retryConfigurator.Interval(3, TimeSpan.FromSeconds(5));
+            retryConfigurator.Ignore(typeof(UnknownItemException));
+        });
         configure.AddConsumers(Assembly.GetEntryAssembly());
         configure.AddSagaStateMachine<PurchaseStateMachine, PurchaseState>()
                     .MongoDbRepository(r =>

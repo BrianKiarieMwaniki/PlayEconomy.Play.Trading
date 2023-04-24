@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Automatonymous;
 using MassTransit;
+using Play.Trading.Service.Activities;
 
 namespace Play.Trading.Service.StateMachine
 {
@@ -45,7 +46,13 @@ namespace Play.Trading.Service.StateMachine
                     context.Instance.Received = DateTimeOffset.UtcNow;
                     context.Instance.LastUpdated = context.Instance.Received;
                 })
+                .Activity(x => x.OfType<CalculatePurchaseTotalActivity>())
                 .TransitionTo(Accepted)
+                .Catch<Exception>(ex => ex.Then(context =>{
+                    context.Instance.ErrorMessage = context.Exception.Message;
+                    context.Instance.LastUpdated = DateTimeOffset.UtcNow;
+                })
+                .TransitionTo(Faulted))
             );
         }
 
