@@ -60,7 +60,7 @@ namespace Play.Trading.Service.Controllers
 
             await _publishEndpoint.Publish(message);
 
-            return AcceptedAtAction(nameof(GetStatusAsync), new {correlationId }, correlationId );
+            return AcceptedAtAction(nameof(GetStatusAsync), new { correlationId }, new { correlationId });
         }
     }
 }
