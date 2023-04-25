@@ -1,5 +1,3 @@
-using System.Net.NetworkInformation;
-using System.Runtime.CompilerServices;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,15 +9,15 @@ using Play.Trading.Service.Entities;
 
 namespace Play.Trading.Service.Consumers
 {
-    public class CatalogItemUpdatedConsumer : IConsumer<CatalogItemUpdated>
+    public class CatalogItemCreatedConsumer : IConsumer<CatalogItemCreated>
     {
         private readonly IRepository<CatalogItem> repository;
 
-        public CatalogItemUpdatedConsumer(IRepository<CatalogItem> repository)
+        public CatalogItemCreatedConsumer(IRepository<CatalogItem> repository)
         {
             this.repository = repository;
         }
-        public async Task Consume(ConsumeContext<CatalogItemUpdated> context)
+        public async Task Consume(ConsumeContext<CatalogItemCreated> context)
         {
             var message = context.Message;
 
