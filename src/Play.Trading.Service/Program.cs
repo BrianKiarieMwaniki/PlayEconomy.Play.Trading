@@ -15,6 +15,8 @@ using Play.Trading.Service.Entities;
 using Play.Trading.Service.StateMachine;
 using GreenPipes;
 using Play.Trading.Service.Exceptions;
+using Play.Trading.Service.Settings;
+using Play.Inventory.Contracts;
 
 var builder = WebApplication.CreateBuilder(args);
 var Configuration = builder.Configuration;
@@ -74,7 +76,10 @@ void AddMassTransit(IServiceCollection services)
             retryConfigurator.Ignore(typeof(UnknownItemException));
         });
         configure.AddConsumers(Assembly.GetEntryAssembly());
-        configure.AddSagaStateMachine<PurchaseStateMachine, PurchaseState>()
+        configure.AddSagaStateMachine<PurchaseStateMachine, PurchaseState>(sagaConfigurator =>
+        {
+            sagaConfigurator.UseInMemoryOutbox();
+        })
                     .MongoDbRepository(r =>
                     {
                         var serviceSettings = Configuration.GetSection(nameof(ServiceSettings)).Get<ServiceSettings>();
@@ -84,6 +89,10 @@ void AddMassTransit(IServiceCollection services)
                         r.DatabaseName = serviceSettings.ServiceName;
                     });
     });
+    
+    var queueSettings = Configuration.GetSection(nameof(QueueSettings)).Get<QueueSettings>();
+
+    EndpointConvention.Map<GrantItems>(new Uri(queueSettings.GrantItemsQueueAddress));
 
     services.AddMassTransitHostedService();
 
