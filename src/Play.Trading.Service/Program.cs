@@ -17,6 +17,7 @@ using GreenPipes;
 using Play.Trading.Service.Exceptions;
 using Play.Trading.Service.Settings;
 using Play.Inventory.Contracts;
+using Play.Identity.Contracts;
 
 var builder = WebApplication.CreateBuilder(args);
 var Configuration = builder.Configuration;
@@ -93,6 +94,8 @@ void AddMassTransit(IServiceCollection services)
     var queueSettings = Configuration.GetSection(nameof(QueueSettings)).Get<QueueSettings>();
 
     EndpointConvention.Map<GrantItems>(new Uri(queueSettings.GrantItemsQueueAddress));
+
+    EndpointConvention.Map<DebitGil>(new Uri(queueSettings.DebitGilQueueAddress));
 
     services.AddMassTransitHostedService();
 
