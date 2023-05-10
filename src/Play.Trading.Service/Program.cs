@@ -26,6 +26,8 @@ var services = builder.Services;
 
 builder.Services.AddMongo()
                 .AddMongoRepository<CatalogItem>("catalogitems")
+                .AddMongoRepository<InventoryItem>("inventoryitems")
+                .AddMongoRepository<ApplicationUser>("users")
                 .AddJwtBearerAuthentication();
 
 AddMassTransit(services);
