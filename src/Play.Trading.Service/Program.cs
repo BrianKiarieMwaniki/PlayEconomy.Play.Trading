@@ -18,6 +18,8 @@ using Play.Trading.Service.Exceptions;
 using Play.Trading.Service.Settings;
 using Play.Inventory.Contracts;
 using Play.Identity.Contracts;
+using Microsoft.AspNetCore.SignalR;
+using Play.Trading.Service.SignalR;
 
 var builder = WebApplication.CreateBuilder(args);
 var Configuration = builder.Configuration;
@@ -45,6 +47,10 @@ builder.Services.AddSwaggerGen(c =>
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "Play.Trading.Service", Version = "v1" });
 });
 
+builder.Services.AddSingleton<IUserIdProvider, UserIdProvider>()
+                .AddSingleton<MessageHub>()
+                .AddSignalR();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -58,11 +64,12 @@ if (app.Environment.IsDevelopment())
         c.RoutePrefix = string.Empty;
     });
 
-    app.UseCors(options =>
+    app.UseCors(builder =>
     {
-        options.WithOrigins(Configuration[AllowedOriginSetting]);
-        options.AllowAnyHeader();
-        options.AllowAnyMethod();
+        builder.WithOrigins(Configuration[AllowedOriginSetting])
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+                .AllowCredentials();
     });
 }
 
@@ -74,7 +81,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
-
+app.MapHub<MessageHub>("/messageHub");
 app.Run();
 
 void AddMassTransit(IServiceCollection services)
