@@ -33,7 +33,7 @@ builder.Services.AddMongo()
                 .AddMongoRepository<ApplicationUser>("users")
                 .AddJwtBearerAuthentication();
 
-AddMassTransit(services);
+AddMassTransit(Configuration,services);
 
 builder.Services.AddControllers(options =>
 {
@@ -84,11 +84,11 @@ app.MapControllers();
 app.MapHub<MessageHub>("/messageHub");
 app.Run();
 
-void AddMassTransit(IServiceCollection services)
+void AddMassTransit(IConfiguration configuration,IServiceCollection services)
 {
     services.AddMassTransit(configure =>
     {
-        configure.UsingPlayEconomyRabbitMq(retryConfigurator =>
+        configure.UsingPlayEconomyMessageBroker(configuration,retryConfigurator =>
         {
             retryConfigurator.Interval(3, TimeSpan.FromSeconds(5));
             retryConfigurator.Ignore(typeof(UnknownItemException));
