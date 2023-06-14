@@ -39,3 +39,16 @@ spec:
               cpu: "150m"
           ports:
             - containerPort: 5006
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: trading-service
+spec:
+  type: LoadBalancer
+  selector:
+    app: trading
+  ports:
+  - port: 82
+    targetPort: 5006
+
