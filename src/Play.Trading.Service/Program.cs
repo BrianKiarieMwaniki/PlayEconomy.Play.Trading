@@ -20,6 +20,7 @@ using Play.Inventory.Contracts;
 using Play.Identity.Contracts;
 using Microsoft.AspNetCore.SignalR;
 using Play.Trading.Service.SignalR;
+using Play.Common.HealthChecks;
 
 var builder = WebApplication.CreateBuilder(args);
 var Configuration = builder.Configuration;
@@ -50,6 +51,8 @@ builder.Services.AddSwaggerGen(c =>
 builder.Services.AddSingleton<IUserIdProvider, UserIdProvider>()
                 .AddSingleton<MessageHub>()
                 .AddSignalR();
+
+builder.Services.AddHealthChecks().AddMongoDb();
 
 var app = builder.Build();
 
@@ -82,6 +85,7 @@ app.UseAuthorization();
 
 app.MapControllers();
 app.MapHub<MessageHub>("/messageHub");
+app.MapPlayEconomyHealthChecks();
 app.Run();
 
 void AddMassTransit(IConfiguration configuration,IServiceCollection services)
