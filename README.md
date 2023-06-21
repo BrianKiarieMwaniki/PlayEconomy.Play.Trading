@@ -5,7 +5,7 @@ Trading microservice for play economy.
 ## Build docker image
 
 ```powershell
-$version="1.0.1"
+$version="1.0.2"
 $env:GH_OWNER="PlayEcomony-Microservices"
 $env:GH_PAT="[PAT HERE]"
 $acrName="playeconomybkm"
