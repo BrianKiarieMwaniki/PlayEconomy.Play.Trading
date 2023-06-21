@@ -5,7 +5,7 @@ Trading microservice for play economy.
 ## Build docker image
 
 ```powershell
-$version="1.0.1"
+$version="1.0.2"
 $env:GH_OWNER="PlayEcomony-Microservices"
 $env:GH_PAT="[PAT HERE]"
 $acrName="playeconomybkm"
@@ -38,4 +38,10 @@ kubectl create namespace $namespace
 
 ```powershell
 kubectl create secret generic trading-secrets --from-literal=cosmosdb-connectionstring=$cosmosDbConnStr --from-literal=servicebus-connectionstring=$serviceBusConnString -n $namespace
+```
+
+## Create the Kubernetes pod
+
+```powershell
+kubectl apply -f .\kubernetes\trading.yaml -n $namespace
 ```
