@@ -39,3 +39,9 @@ kubectl create namespace $namespace
 ```powershell
 kubectl create secret generic trading-secrets --from-literal=cosmosdb-connectionstring=$cosmosDbConnStr --from-literal=servicebus-connectionstring=$serviceBusConnString -n $namespace
 ```
+
+## Create the Kubernetes pod
+
+```powershell
+kubectl apply -f .\kubernetes\trading.yaml -n $namespace
+```
