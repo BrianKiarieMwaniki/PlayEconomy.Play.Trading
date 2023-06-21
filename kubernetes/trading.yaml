@@ -42,12 +42,12 @@ spec:
           livenessProbe:
             httpGet:
               path: /health/live
-              port: 5002
+              port: 5006
             initialDelaySeconds: 10
           readinessProbe:
             httpGet:
               path: /health/ready
-              port: 5002
+              port: 5006
             initialDelaySeconds: 10
 ---
 apiVersion: v1
